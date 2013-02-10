@@ -15,10 +15,17 @@ def generate(opts, cxxflags):
 
     if opts.type == 'html' or opts.type == 'xml':
         generator = generators.Xml(t, opts)
-        generator.generate(os.path.join(opts.output, 'xml'))
+
+        xmlout = os.path.join(opts.output, 'xml')
+        generator.generate(xmlout)
+
+        isstatic = opts.static
 
         if opts.type == 'html':
-            generators.Html().generate(opts.output)
+            generators.Html().generate(opts.output, isstatic)
+
+            if isstatic:
+                shutil.rmtree(xmlout)
 
 def serve(opts):
     import subprocess, SimpleHTTPServer, SocketServer, threading, time
@@ -112,6 +119,9 @@ def run():
 
     parser.add_argument('--basedir', default=None, metavar='DIR',
                         help='the project base directory')
+
+    parser.add_argument('--static', default=False,
+                        help='generate a static website (only for when --output is html)')
 
     parser.add_argument('files', nargs='+', help='files to parse')
 

@@ -5,7 +5,7 @@ import inspect, os, shutil
 from .generator import Generator
 
 class Html(Generator):
-    def generate(self, output):
+    def generate(self, output, isstatic):
         current = inspect.getfile(inspect.currentframe())
         d = os.path.dirname(current)
 
