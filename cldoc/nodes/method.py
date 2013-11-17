@@ -36,29 +36,28 @@ class Method(Function):
 
     @property
     def override(self):
-        if not self._override is None:
-            return self._override
+        if self._override is None:
+            self._override = []
 
-        # Lookup in bases, recursively
-        bases = list(self.parent.bases)
-        mname = self.name
+            if hasattr(self.parent, 'bases'):
+                # Lookup in bases, recursively
+                bases = list(self.parent.bases)
+                mname = self.name
 
-        self._override = []
+                while len(bases) > 0:
+                    b = bases[0]
+                    bases = bases[1:]
 
-        while len(bases) > 0:
-            b = bases[0]
-            bases = bases[1:]
+                    if not b.node:
+                        continue
 
-            if not b.node:
-                continue
+                    b = b.node
 
-            b = b.node
-
-            if mname in b.name_to_method:
-                self._override.append(b.name_to_method[mname])
-            else:
-                # Look in the bases of bases also
-                bases = bases + b.bases
+                    if mname in b.name_to_method:
+                        self._override.append(b.name_to_method[mname])
+                    else:
+                        # Look in the bases of bases also
+                        bases = bases + b.bases
 
         return self._override
 

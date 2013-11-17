@@ -373,17 +373,17 @@ class CommentsDatabase(object):
         while token.kind == cindex.TokenKind.COMMENT:
             cleaned = self.clean(token)
 
-            # Process instructions directly, now
-            if not CommentsDatabase.cldoc_instrre.match(cleaned) is None:
-                comments = [cleaned]
-                break
+            if cleaned is not None:
+                # Process instructions directly, now
+                if not CommentsDatabase.cldoc_instrre.match(cleaned) is None:
+                    comments = [cleaned]
+                    break
 
-            # Check adjacency
-            if not prev is None and prev.extent.end.line + 1 < token.extent.start.line:
-                # Empty previous comment
-                comments = []
+                # Check adjacency
+                if not prev is None and prev.extent.end.line + 1 < token.extent.start.line:
+                    # Empty previous comment
+                    comments = []
 
-            if not cleaned is None:
                 comments.append(cleaned)
 
             prev = token
